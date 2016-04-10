@@ -42,6 +42,11 @@ $> git clone https://github.com/simonschiele/dot.i3/ ~/.i3/
 ...
 
 
+## Resources
+
+ * i3 userguide (https://i3wm.org/docs/userguide.html)
+
+
 ## Authors
 
 **Simon Schiele** ([simon.codingmonkey@gmail.com](mailto:simon.codingmonkey@gmail.com))
