@@ -39,16 +39,15 @@ new_window 1pixel
 new_float 1pixel
 
 # default_orientation <horizontal|vertical|auto>
-# workspace_layout <default|stacking|tabbed>   # set the default for new containers
+# workspace_layout <default|stacking|tabbed>                # set the default for new containers
 # hide_edge_borders <none|vertical|horizontal|both>
-# mouse_warping <output|none>   # center cursor on window
+# mouse_warping <output|none>                               # center cursor on window
 # popup_during_fullscreen <smart|ignore|leave_fullscreen>
 # force_xinerama <yes|no>
 
-# kill/quit/...
-
-# kill focused window
+# kill window
 bindsym $mod+x kill
+bindsym $mod+Shift+x exec --no-startup-id xkill
 
 # change focus
 bindsym $mod+Left focus left
@@ -93,7 +92,7 @@ bindsym $mod+w layout toggle
 # focus the child container
 #bindsym $mod+d focus child
 
-# default workspace 
+# default workspace
 workspace 1 output LVDS1
 #workspace 1 output HDMI-1
 
@@ -160,7 +159,7 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -- -5%
 bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
 
-# chat 
+# chat
 #for_window [title="(?i)pidgin"] move left; resize shrink right 31px or 31 ppt
 for_window [title="^Call with*"] move scratchpad; show scratchpad
 for_window [class="(?i)pidgin"] floating enable
@@ -188,15 +187,15 @@ for_window [title="Terminator Preferences"] floating enable
 #for_window [class="Firefox" instance="Navigator"] floating disable
 
 # system mode - logout, reload, suspend, reboot, ...
-set $mode_system System (l) lock, (q) logout, (r) reload, (shift+r) restart, (s) suspend, (ctrl+shift+r) reboot, (h) halt
+set $mode_system System (l) lock, (e) exit/logout, (r) reload, (shift+r) restart, (s) suspend, (ctrl+shift+r) reboot, (shift+h) halt
 mode "$mode_system" {
     bindsym l exec --no-startup-id $lock, mode "default"
-    bindsym q exec --no-startup-id i3-msg exit, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
     bindsym r exec --no-startup-id i3-msg reload, mode "default"
     bindsym Shift+r exec --no-startup-id i3-msg restart, mode "default"
     bindsym s exec --no-startup-id $lock && systemctl suspend, mode "default"
     bindsym Control+Shift+r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym Shift+h exec --no-startup-id systemctl poweroff -i, mode "default"  
+    bindsym Shift+h exec --no-startup-id systemctl poweroff -i, mode "default"
     #bindsym h exec --no-startup-id $lock && systemctl hibernate, mode "default"
 
     # back to normal: Enter or Escape
@@ -246,12 +245,10 @@ mode "resize accurate" {
 }
 bindsym $mod+Shift+r mode "resize accurate"
 
-
 # autostart
 exec_always --no-startup-id /home/simon/.bin/set.wallpaper
 exec --no-startup-id compton --backend glx --vsync opengl -b
-exec --no-startup-id nm-applet
 exec --no-startup-id pasystray
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
 exec --no-startup-id unclutter -idle 20
-# exec --no-startup-id i3-msg 'workspace 10; exec icedove; workspace 1'
-# exec --no-startup-id synergy

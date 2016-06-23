@@ -39,7 +39,10 @@ $> git clone https://github.com/simonschiele/dot.i3/ ~/.i3/
 
 ## Keymappings
 
-...
+| Option                                | Description |
+| ------------------------------------- | ----------- |
+| $mod4 + Left/Right/Up/Down            | Focus left/right/... |
+| $mod4 + Shift + Left/Right/Up/Down    | Move window left/right/... |
 
 
 ## Resources
