@@ -246,9 +246,13 @@ mode "resize accurate" {
 bindsym $mod+Shift+r mode "resize accurate"
 
 # autostart
-exec_always --no-startup-id /home/simon/.bin/set.wallpaper
 exec --no-startup-id compton --backend glx --vsync opengl -b
-exec --no-startup-id pasystray
-exec --no-startup-id nm-applet
+exec_always --no-startup-id /home/simon/.bin/set.wallpaper
+
 exec --no-startup-id blueman-applet
+exec --no-startup-id nm-applet
+exec --no-startup-id pasystray
+exec --no-startup-id pidgin
+exec --no-startup-id skype
+exec --no-startup-id udiskie -0 -q -n -s -A -f $filer
 exec --no-startup-id unclutter -idle 20
