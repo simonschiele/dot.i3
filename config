@@ -42,7 +42,6 @@ new_float 1pixel
 # workspace_layout <default|stacking|tabbed>                # set the default for new containers
 # hide_edge_borders <none|vertical|horizontal|both>
 # mouse_warping <output|none>                               # center cursor on window
-# popup_during_fullscreen <smart|ignore|leave_fullscreen>
 # force_xinerama <yes|no>
 
 # kill window
@@ -54,6 +53,7 @@ bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
+bindsym $mod+u [urgent=latest] focus
 
 # focus left|right
 bindsym $mod+Tab focus right
@@ -73,6 +73,7 @@ bindsym $mod+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen
+# popup_during_fullscreen <smart|ignore|leave_fullscreen>
 
 # toggle tiling / floating
 bindsym $mod+Shift+f floating toggle
@@ -93,8 +94,9 @@ bindsym $mod+w layout toggle
 #bindsym $mod+d focus child
 
 # default workspace
-workspace 1 output LVDS1
-#workspace 1 output HDMI-1
+workspace 1 output VGA-1
+workspace 5 output DP-1
+workspace 10 output DP-2
 
 #switch to workspace
 bindsym $mod+1 exec --no-startup-id "i3-msg workspace 1; i3-msg scratchpad show"
@@ -129,7 +131,35 @@ workspace_auto_back_and_forth yes
 # finds out, if available)
 bar {
     position top
+    status_command i3status --config ~/.i3/status_small.conf
+
+    output VGA-1
+    output VGA1
+    output DP-2
+    output DP2
+
+    tray_output none
+}
+
+bar {
+    position top
     status_command i3status --config ~/.i3/status.conf
+
+    output DP-1
+    output DP1
+
+    tray_output DP-1
+    #tray_output primary
+    #tray_output DP1
+
+    # status_command i3status
+}
+
+bar {
+    position top
+    #tray_output DP-2
+    #tray_output DP2
+
     # status_command i3status
 }
 
@@ -153,6 +183,7 @@ bindsym $mod+i exec --no-startup-id $terminal -e "ipython"
 # screenshot
 bindsym Print exec --no-startup-id $screenshot
 bindsym $mod+Print exec --no-startup-id $screenshotui
+bindsym Shift+Print exec --no-startup-id $screenshotui
 
 # multimedia keys
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
@@ -161,12 +192,13 @@ bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
 
 # chat
 #for_window [title="(?i)pidgin"] move left; resize shrink right 31px or 31 ppt
-for_window [title="^Call with*"] move scratchpad; show scratchpad
-for_window [class="(?i)pidgin"] floating enable
+#for_window [title="^Call with*"] move scratchpad; show scratchpad
+#for_window [class="(?i)pidgin"] floating enable
 assign [class="(?i)pidgin"] 10
-for_window [class="(?i)skype"] floating enable
-assign [class="(?i)skype"] 10
 assign [title="irssi"] 10
+assign [title="irc"] 10
+assign [class="(?i)skype"] 10
+for_window [class="(?i)skype"] floating enable
 
 # floating
 for_window [window_role="pop-up"] floating enable
