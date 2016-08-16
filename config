@@ -134,9 +134,7 @@ bar {
     status_command i3status --config ~/.i3/status_small.conf
 
     output VGA-1
-    output VGA1
     output DP-2
-    output DP2
 
     tray_output none
 }
@@ -146,19 +144,10 @@ bar {
     status_command i3status --config ~/.i3/status.conf
 
     output DP-1
-    output DP1
 
     tray_output DP-1
     #tray_output primary
     #tray_output DP1
-
-    # status_command i3status
-}
-
-bar {
-    position top
-    #tray_output DP-2
-    #tray_output DP2
 
     # status_command i3status
 }
@@ -280,6 +269,7 @@ bindsym $mod+Shift+r mode "resize accurate"
 # autostart
 exec --no-startup-id compton --backend glx --vsync opengl -b
 exec_always --no-startup-id /home/simon/.bin/set.wallpaper
+exec_always --no-startup-id feh --bg-fill /home/simon/.wallpapers/techno_3840x1024.jpg
 
 exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet
