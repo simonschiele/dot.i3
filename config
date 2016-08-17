@@ -99,20 +99,18 @@ workspace 5 output DP-1
 workspace 10 output DP-2
 
 #switch to workspace
-bindsym $mod+1 exec --no-startup-id "i3-msg workspace 1; i3-msg scratchpad show"
-bindsym $mod+2 exec --no-startup-id "i3-msg workspace 2; i3-msg scratchpad show"
-bindsym $mod+3 exec --no-startup-id "i3-msg workspace 3; i3-msg scratchpad show"
-bindsym $mod+4 exec --no-startup-id "i3-msg workspace 4; i3-msg scratchpad show"
-bindsym $mod+5 exec --no-startup-id "i3-msg workspace 5; i3-msg scratchpad show"
-bindsym $mod+6 exec --no-startup-id "i3-msg workspace 6; i3-msg scratchpad show"
-bindsym $mod+7 exec --no-startup-id "i3-msg workspace 7; i3-msg scratchpad show"
-bindsym $mod+8 exec --no-startup-id "i3-msg workspace 8; i3-msg scratchpad show"
-bindsym $mod+9 exec --no-startup-id "i3-msg workspace 9; i3-msg scratchpad show"
-bindsym $mod+0 exec --no-startup-id "i3-msg workspace 10; i3-msg scratchpad show"
-bindsym $mod+Shift+a exec --no-startup-id "i3-msg move scratchpad; i3-msg scratchpad show"
-bindsym $mod+a scratchpad show
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
 
-# move focused container to workspace
+# move f$modocused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
 bindsym $mod+Shift+3 move container to workspace 3
@@ -144,8 +142,10 @@ bar {
     status_command i3status --config ~/.i3/status.conf
 
     output DP-1
+    output LVDS1
 
     tray_output DP-1
+    tray_output LVDS1
     #tray_output primary
     #tray_output DP1
 
@@ -166,7 +166,7 @@ bindsym $mod+Shift+Return exec --no-startup-id $filer
 bindsym $mod+Return exec --no-startup-id $terminal
 bindsym $mod+BackSpace exec --no-startup-id $browser
 bindsym $mod+Shift+BackSpace exec --no-startup-id $browser_incognito
-bindsym $mod+m exec --no-startup-id gnome-maps
+bindsym $mod+m exec --no-startup-id gmpc-remote --toggle-view
 bindsym $mod+i exec --no-startup-id $terminal -e "ipython"
 
 # screenshot
