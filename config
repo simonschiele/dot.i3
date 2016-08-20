@@ -213,20 +213,20 @@ for_window [title="Terminator Preferences"] floating enable
 #for_window [class="Firefox" instance="Navigator"] floating disable
 
 # system mode - logout, reload, suspend, reboot, ...
-set $mode_system System (l) lock, (e) exit/logout, (r) reload, (shift+r) restart, (s) suspend, (ctrl+shift+r) reboot, (shift+h) halt
+set $mode_system System (l) lock, (q) quit/logout, (r) reload, (mod+r) restart, (s) suspend, (mod+shift+r) reboot, (mod+shift+s) halt
 mode "$mode_system" {
     bindsym l exec --no-startup-id $lock, mode "default"
-    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym q exec --no-startup-id i3-msg exit, mode "default"
     bindsym r exec --no-startup-id i3-msg reload, mode "default"
-    bindsym Shift+r exec --no-startup-id i3-msg restart, mode "default"
-    bindsym s exec --no-startup-id $lock && systemctl suspend, mode "default"
-    bindsym Control+Shift+r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym Shift+h exec --no-startup-id systemctl poweroff -i, mode "default"
-    #bindsym h exec --no-startup-id $lock && systemctl hibernate, mode "default"
+    bindsym $mod+r exec --no-startup-id i3-msg restart, mode "default"
+    bindsym s exec --no-startup-id systemctl suspend, mode "default"
+    bindsym $mod+Shift+r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym $mod+Shift+h exec --no-startup-id systemctl poweroff -i, mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "default"
+    bindsym BackSpace mode "default"
 }
 bindsym $mod+q mode "$mode_system"
 
