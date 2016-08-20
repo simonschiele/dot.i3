@@ -132,9 +132,18 @@ bar {
     status_command i3status --config ~/.i3/status_small.conf
 
     output VGA-1
-    output DP-2
 
     tray_output none
+}
+
+bar {
+    position top
+    status_command i3status --config ~/.i3/status_small.conf
+
+    output DP-2
+
+    #tray_output none
+    tray_output DP-2
 }
 
 bar {
@@ -144,12 +153,8 @@ bar {
     output DP-1
     output LVDS1
 
-    tray_output DP-1
+    #tray_output none|primary|DP1
     tray_output LVDS1
-    #tray_output primary
-    #tray_output DP1
-
-    # status_command i3status
 }
 
 # launcher
