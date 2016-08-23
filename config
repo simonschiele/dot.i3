@@ -172,7 +172,7 @@ bindsym $mod+Return exec --no-startup-id $terminal
 bindsym $mod+BackSpace exec --no-startup-id $browser
 bindsym $mod+Shift+BackSpace exec --no-startup-id $browser_incognito
 bindsym $mod+m exec --no-startup-id gmpc-remote --toggle-view
-bindsym $mod+i exec --no-startup-id $terminal -e "ipython"
+#bindsym $mod+i exec --no-startup-id $terminal -e "ipython"
 
 # screenshot
 bindsym Print exec --no-startup-id $screenshot
@@ -188,11 +188,11 @@ bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
 #for_window [title="(?i)pidgin"] move left; resize shrink right 31px or 31 ppt
 #for_window [title="^Call with*"] move scratchpad; show scratchpad
 #for_window [class="(?i)pidgin"] floating enable
-assign [class="(?i)pidgin"] 10
-assign [title="irssi"] 10
+#for_window [class="(?i)skype"] floating enable
 assign [title="irc"] 10
+assign [title="irssi"] 10
 assign [class="(?i)skype"] 10
-for_window [class="(?i)skype"] floating enable
+assign [class="(?i)pidgin" title="^(?!Quickpurple$)"] 10
 
 # floating
 for_window [window_role="pop-up"] floating enable
@@ -262,7 +262,7 @@ exec_always --no-startup-id /home/simon/.bin/set.wallpaper
 exec_always --no-startup-id feh --bg-fill /home/simon/.wallpapers/techno_3840x1024.jpg
 
 exec --no-startup-id blueman-applet
-exec --no-startup-id nm-applet
+exec --no-startup-id nm-applet --sm-disable
 exec --no-startup-id pasystray
 exec --no-startup-id pidgin
 exec --no-startup-id skype
