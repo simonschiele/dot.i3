@@ -208,6 +208,7 @@ for_window [title="(?i)wicd network manager"] floating enable
 for_window [class="(?i)nautilus"] floating enable
 for_window [class="(?i)thunar"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable
+for_window [class="(?i)synergy"] floating enable
 for_window [title="Terminator Preferences"] floating enable
 #for_window [class="Firefox"] floating enable
 #for_window [class="Firefox" instance="Navigator"] floating disable
@@ -268,3 +269,4 @@ exec --no-startup-id pidgin
 exec --no-startup-id skype
 exec --no-startup-id udiskie -0 -q -n -s -A -f $filer
 exec --no-startup-id unclutter -idle 20
+exec --no-startup-id gmpc --start-hidden --debug-level=0 --profile=Default
