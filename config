@@ -1,47 +1,43 @@
-# main modkey
+# main modkeys
+# I try to use the "super"-key for everything WM related.
+# Sometimes in combination with Shift, Ctrl and/or Alt.
 set $mod Mod4
 set $alt Mod1
 
-# applications
-set $terminal terminator
-set $filer nautilus
+# commands
 set $browser chromium
 set $browser_incognito chromium --incognito
+set $compositor compton --backend glx --vsync opengl -b
+set $editor i3-sensible-editor
+set $exit i3-msg exit
+set $filer nautilus
 set $lock i3lock -e -d -c 000022 && sleep 1
+set $pager i3-sensible-pager
+set $reboot systemctl reboot
+set $reload i3-msg reload
+set $restart i3-msg restart
 set $screenshot gnome-screenshot -f ./screenshot-$(date +%Y-%m-%d_%s).png
 set $screenshotui gnome-screenshot -i
-
-
-# Font for window titles. Will also be used by the bar unless a different font
-# is used in the bar {} block below.
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Mono 8
-# Before i3 v4.8, we used to recommend this one as the default:
-# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
-
-# mod+mouse to drag windows
-floating_modifier $mod
+set $shutdown systemctl poweroff -i
+set $suspend2disk nop
+set $suspend2ram systemctl suspend
+set $terminal i3-sensible-terminal
 
 # general settings
+workspace_layout default
+default_orientation horizontal
+new_window 1pixel                # new tiling window - border
+new_float 1pixel                 # new floating window - border
+hide_edge_borders both           # <none|vertical|horizontal|both>
 focus_follows_mouse yes
-force_focus_wrapping yes
-floating_minimum_size 75 x 50
+force_focus_wrapping yes         # not sure I want that anymore...
+force_display_urgency_hint 1000 ms
+floating_modifier $mod
+floating_minimum_size 100 x 50
 floating_maximum_size -1 x -1
-
-# new_window <normal|1pixel|none|pixel>   # border
-# new_float <normal|1pixel|none|pixel>    # border
-new_window 1pixel
-new_float 1pixel
-
-# default_orientation <horizontal|vertical|auto>
-# workspace_layout <default|stacking|tabbed>                # set the default for new containers
-# hide_edge_borders <none|vertical|horizontal|both>
-# mouse_warping <output|none>                               # center cursor on window
+font pango:DejaVu Sans Mono 8
+# popup_during_fullscreen <smart|ignore|leave_fullscreen>
+# mouse_warping <output|none>    # center cursor on window  # <output|none>
 # force_xinerama <yes|no>
 
 # kill window
@@ -55,9 +51,9 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 bindsym $mod+u [urgent=latest] focus
 
-# focus left|right
-bindsym $mod+Tab focus right
-bindsym Control+Tab focus left
+# baaad
+# bindsym $mod+Tab focus right
+# bindsym Control+Tab focus left
 
 # move focused window
 bindsym $mod+Shift+Left move left 20px
@@ -65,15 +61,12 @@ bindsym $mod+Shift+Down move down 20px
 bindsym $mod+Shift+Up move up 20px
 bindsym $mod+Shift+Right move right 20px
 
-# split in horizontal orientation
+# split in horizontal/vertical orientation
 bindsym $mod+h split h
-
-# split in vertical orientation
 bindsym $mod+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen
-# popup_during_fullscreen <smart|ignore|leave_fullscreen>
 
 # toggle tiling / floating
 bindsym $mod+Shift+f floating toggle
@@ -94,9 +87,9 @@ bindsym $mod+w layout toggle
 #bindsym $mod+d focus child
 
 # default workspace
-workspace 1 output VGA-1
-workspace 5 output DP-1
-workspace 10 output DP-2
+#workspace 1 output VGA-1
+#workspace 5 output DP-1
+#workspace 10 output DP-2
 
 #switch to workspace
 bindsym $mod+1 workspace 1
@@ -125,36 +118,19 @@ bindsym $mod+Shift+0 move container to workspace 10
 # workspace back+forth
 workspace_auto_back_and_forth yes
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
+# i3bar
 bar {
     position top
-    status_command i3status --config ~/.i3/status_small.conf
 
-    output VGA-1
+    # I'm not convinced yet...
+    # mode hide
+    #rhidden_state hide
 
-    tray_output none
-}
+    status_command i3blocks -c ~/.config/i3/i3blocks.conf || \
+                   i3status -c ~/.config/i3/i3status.conf
 
-bar {
-    position top
-    status_command i3status --config ~/.i3/status_small.conf
-
-    output DP-2
-
-    #tray_output none
-    tray_output DP-2
-}
-
-bar {
-    position top
-    status_command i3status --config ~/.i3/status.conf
-
-    output DP-1
-    output LVDS1
-
-    #tray_output none|primary|DP1
-    tray_output LVDS1
+    tray_output LVDS-1
+    tray_output primary
 }
 
 # launcher
@@ -165,14 +141,13 @@ bindsym $mod+e exec --no-startup-id dmenu_run # -nb red
 bindsym $mod+s exec --no-startup-id $terminal -e ssh $( history | grep "[0-9]  ssh " | rev | cut -d' ' -f1 | rev | sort -u | dmenu -i -nb black -nf red -sb red -sf black -l 12 )
 
 # applications
-bindsym $mod+F1 exec --no-startup-id $terminal -e "less ~/.i3/README.md"
 bindsym $mod+F2 exec --no-startup-id $lock
-bindsym $mod+Shift+Return exec --no-startup-id $filer
 bindsym $mod+Return exec --no-startup-id $terminal
+bindsym $mod+Shift+Return exec --no-startup-id $filer
 bindsym $mod+BackSpace exec --no-startup-id $browser
 bindsym $mod+Shift+BackSpace exec --no-startup-id $browser_incognito
 bindsym $mod+m exec --no-startup-id gmpc-remote --toggle-view
-#bindsym $mod+i exec --no-startup-id $terminal -e "ipython"
+bindsym $mod+p exec --no-startup-id $terminal -e "ipython"
 
 # screenshot
 bindsym Print exec --no-startup-id $screenshot
@@ -180,93 +155,77 @@ bindsym $mod+Print exec --no-startup-id $screenshotui
 bindsym Shift+Print exec --no-startup-id $screenshotui
 
 # multimedia keys
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -- -5%
-bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
-
-# chat
-#for_window [title="(?i)pidgin"] move left; resize shrink right 31px or 31 ppt
-#for_window [title="^Call with*"] move scratchpad; show scratchpad
-#for_window [class="(?i)pidgin"] floating enable
-#for_window [class="(?i)skype"] floating enable
-assign [title="irc"] 10
-assign [title="irssi"] 10
-assign [class="(?i)skype"] 10
-assign [class="(?i)pidgin" title="^(?!Quickpurple$)"] 10
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+bindsym XF86AudioNext nop
+bindsym XF86AudioPause nop
+bindsym XF86AudioPlay nop
+bindsym XF86AudioPrev nop
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioStop nop
+bindsym XF86Back nop
+bindsym XF86Battery nop
+bindsym XF86Forward nop
+bindsym XF86MonBrightnessDown exec xbacklight -dec 20
+bindsym XF86MonBrightnessUp exec xbacklight -inc 20
+bindsym XF86TouchpadToggle nop
+bindsym XF86WLAN nop
 
 # floating
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
 for_window [class="(?i)notify"] floating enable border 1pixel
 for_window [class="(?i)qemu-system*"] floating enable
-for_window [title="(?i)cinelerra*"] floating enable
 for_window [class="(?i)mplayer"] floating enable
 for_window [class="(?i)mpv"] floating enable
 for_window [class="(?i)gimp"] floating enable
 for_window [class="(?i)gmrun"] floating enable
-for_window [title="(?i)wicd network manager"] floating enable
 for_window [class="(?i)nautilus"] floating enable
 for_window [class="(?i)thunar"] floating enable
 for_window [class="(?i)pavucontrol"] floating enable
 for_window [class="(?i)synergy"] floating enable
+for_window [title="(?i)cinelerra*"] floating enable
+for_window [title="(?i)wicd network manager"] floating enable
 for_window [title="Terminator Preferences"] floating enable
-#for_window [class="Firefox"] floating enable
-#for_window [class="Firefox" instance="Navigator"] floating disable
 
-# system mode - logout, reload, suspend, reboot, ...
-set $mode_system System (l) lock, (q) quit/logout, (r) reload, (mod+r) restart, (s) suspend, (mod+shift+r) reboot, (mod+shift+s) halt
-mode "$mode_system" {
-    bindsym l exec --no-startup-id $lock, mode "default"
-    bindsym q exec --no-startup-id i3-msg exit, mode "default"
-    bindsym r exec --no-startup-id i3-msg reload, mode "default"
-    bindsym $mod+r exec --no-startup-id i3-msg restart, mode "default"
-    bindsym s exec --no-startup-id systemctl suspend, mode "default"
-    bindsym $mod+Shift+r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym $mod+Shift+h exec --no-startup-id systemctl poweroff -i, mode "default"
-
-    # back to normal: Enter or Escape
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-    bindsym BackSpace mode "default"
-}
-bindsym $mod+q mode "$mode_system"
-
-# resize window (you can also use the mouse for that)
+# resize window mode
+# use either mouse or switch to "resize mode" with win+r. In resize mode
+# you can use cursor keys or hjkl to resize focused window
 mode "resize" {
     bindsym Left resize shrink width 10 px or 10 ppt
     bindsym Down resize grow height 10 px or 10 ppt
     bindsym Up resize shrink height 10 px or 10 ppt
     bindsym Right resize grow width 10 px or 10 ppt
 
-    # back to normal: Enter or Escape
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+
+    # bindsym Shift-h resize shrink width 1 px or 1 ppt
+
     bindsym Return mode "default"
     bindsym Escape mode "default"
     bindsym BackSpace mode "default"
 }
 bindsym $mod+r mode "resize"
 
-mode "resize accurate" {
-    bindsym Left resize shrink width 1 px or 1 ppt
-    bindsym Down resize grow height 1 px or 1 ppt
-    bindsym Up resize shrink height 1 px or 1 ppt
-    bindsym Right resize grow width 1 px or 1 ppt
+# system mode
+# logout, reload, suspend, reboot, ...
+set $mode_system System (l) lock, (q) quit/logout, (r) restart, (s) suspend, (mod+shift+r) reboot, (mod+shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $lock, mode "default"
+    bindsym q exec $exit, mode "default"
+    bindsym r exec $restart, mode "default"
+    bindsym s exec --no-startup-id $suspend2ram, mode "default"
+    bindsym $mod+Shift+r exec --no-startup-id $reboot, mode "default"
+    bindsym $mod+Shift+s exec --no-startup-id $shutdown, mode "default"
 
     bindsym Return mode "default"
     bindsym Escape mode "default"
     bindsym BackSpace mode "default"
 }
-bindsym $mod+Shift+r mode "resize accurate"
+bindsym $mod+q mode "$mode_system"
 
-# autostart
-exec --no-startup-id compton --backend glx --vsync opengl -b
-exec_always --no-startup-id /home/simon/.bin/set.wallpaper
-exec_always --no-startup-id feh --bg-fill /home/simon/.wallpapers/techno_3840x1024.jpg
-
-exec --no-startup-id blueman-applet
-exec --no-startup-id nm-applet --sm-disable
-exec --no-startup-id pasystray
-exec --no-startup-id pidgin
-exec --no-startup-id skype
-exec --no-startup-id udiskie -0 -q -n -s -A -f $filer
-exec --no-startup-id unclutter -idle 20
-exec --no-startup-id gmpc --start-hidden --debug-level=0 --profile=Default
+# autostart (mostly replaced by systemd units)
+exec --no-startup-id $compositor
