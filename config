@@ -155,26 +155,31 @@ bindsym $mod+Print exec --no-startup-id $screenshotui
 bindsym Shift+Print exec --no-startup-id $screenshotui
 
 # multimedia keys
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -- -5%
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
-bindsym XF86AudioNext nop
-bindsym XF86AudioPause nop
-bindsym XF86AudioPlay nop
-bindsym XF86AudioPrev nop
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
-bindsym XF86AudioStop nop
-bindsym XF86Back nop
-bindsym XF86Battery nop
-bindsym XF86Forward nop
-bindsym XF86MonBrightnessDown exec xbacklight -dec 20
-bindsym XF86MonBrightnessUp exec xbacklight -inc 20
-bindsym XF86TouchpadToggle nop
-bindsym XF86WLAN nop
+# bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -- -5%
+# bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+# bindsym XF86AudioNext nop
+# bindsym XF86AudioPause nop
+# bindsym XF86AudioPlay nop
+# bindsym XF86AudioPrev nop
+# bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+# bindsym XF86AudioStop nop
+# bindsym XF86Back nop
+# bindsym XF86Battery nop
+# bindsym XF86Forward nop
+# bindsym XF86MonBrightnessDown exec xbacklight -dec 20
+# bindsym XF86MonBrightnessUp exec xbacklight -inc 20
+# bindsym XF86TouchpadToggle nop
+# bindsym XF86WLAN nop
 
-# floating
+# floating - generic and non-optional
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
+for_window [title="Complete Installation"] floating enable
+for_window [title="Terminator Preferences"] floating enable
+for_window [title="Android Studio Setup Wizard"] floating enable
 for_window [class="(?i)notify"] floating enable border 1pixel
+
+# floating - personal applications
 for_window [class="(?i)qemu-system*"] floating enable
 for_window [class="(?i)mplayer"] floating enable
 for_window [class="(?i)mpv"] floating enable
@@ -186,7 +191,8 @@ for_window [class="(?i)pavucontrol"] floating enable
 for_window [class="(?i)synergy"] floating enable
 for_window [title="(?i)cinelerra*"] floating enable
 for_window [title="(?i)wicd network manager"] floating enable
-for_window [title="Terminator Preferences"] floating enable
+for_window [title="(?i)Android*Emulator*"] floating enable
+for_window [title="(?i)Emulator*"] floating enable
 
 # resize window mode
 # use either mouse or switch to "resize mode" with win+r. In resize mode
