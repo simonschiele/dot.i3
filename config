@@ -177,6 +177,9 @@ for_window [window_role="task_dialog"] floating enable
 for_window [title="Complete Installation"] floating enable
 for_window [title="Terminator Preferences"] floating enable
 for_window [title="Android Studio Setup Wizard"] floating enable
+for_window [class="Arandr"] floating enable
+for_window [class="Xmessage"] floating enable
+for_window [title="(?i)nitrogen"] floating enable
 for_window [class="(?i)notify"] floating enable border 1pixel
 
 # floating - personal applications
