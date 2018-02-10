@@ -1,0 +1,12 @@
+#!/bin/bash
+# returns the interesting properties for a window to write i3 client rules
+# will spawn in a xmessage window to be usable via keymap
+
+function i3-xprop() {
+    xprop \
+        | grep -e TYPE -e NAME -e CLASS -e ROLE \
+        | grep -v -e LOCALE -e ICON \
+        | xmessage -center -file -
+}
+
+i3-xprop "$@"
