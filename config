@@ -335,7 +335,6 @@ mode "$mode_resize" {
     bindsym BackSpace mode "default"
     bindsym Escape mode "default"
     bindsym Return mode "default"
-    bindsym Space mode "default"
 }
 bindsym $mod+r mode "$mode_resize"
 
@@ -354,7 +353,6 @@ mode "$mode_system" {
     bindsym BackSpace mode "default"
     bindsym Escape mode "default"
     bindsym Return mode "default"
-    bindsym Space mode "default"
 }
 bindsym $mod+q mode "$mode_system"
 
