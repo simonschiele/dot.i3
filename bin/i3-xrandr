@@ -1,0 +1,128 @@
+#!/bin/bash
+#
+# helper for multihead handling in i3.
+# terrible idea to handle it that way... ideas welcome...
+#
+
+LANG=C
+DISPLAY=${DISPLAY:-:0}
+set -e
+
+function reload_i3() {
+    #$verbose && echo "> Restarting i3"
+
+    #for workspace_json in $( i3-msg -t get_workspaces | jq -c '.[]' ) ; do
+    #    local name output
+    #    name=$( echo $workspace_json | jq -r '.name' )
+    #    output=$( echo $workspace_json | jq -r '.name' )
+    #    if ! $( echo $outputs_connected | grep -q "$output" ) ; then
+    #        echo "ui: $name"
+    #    fi
+    #done
+
+    #if ! DISPLAY=$DISPLAY i3-msg 'restart' >/dev/null ; then
+    #    echo "Error reloading i3 via i3-msg" >&2
+    #    return 1
+    #fi
+
+    return 0
+}
+
+function i3_xrandr() {
+    local ret action laptop lvds edp amount reload verbose mode outputs_connected output_primary
+    ret=0
+    action=${1}
+    laptop=false
+    lvds=false
+    edp=false
+    reload=false
+    verbose=true
+    mode=extend
+
+    out=$( xrandr --display "$DISPLAY" -q )
+    outputs_connected=$( echo "$out" | grep " connected " )
+    amount=$( echo "$outputs_connected" | wc -l )
+
+    if ( echo "$out" | grep -q "^eDP" ) ; then
+        laptop=true
+        edp=true
+    elif ( echo "$out" | grep -i -q "^lvds" ) ; then
+        laptop=true
+        lvds=true
+    fi
+
+    if [[ $amount -eq 1 ]] ; then
+        output_primary=$( echo "$outputs_connected" | awk '{ print $1 }' )
+    elif [[ $amount -eq 3 ]] ; then
+        output_primary="DP2-2"
+    fi
+
+    case "$action" in
+
+        help)
+            echo "./$( basename $0 ) - Detect/Toggle screen-setup in for my i3 setup"
+            echo ""
+            echo "usage:"
+            echo " $( basename $0 ) <action> <options>"
+            echo ""
+            echo "actions:"
+            echo " help"
+            echo " show"
+            echo " toggle"
+            echo " auto"
+            echo ""
+            echo "default action:"
+            echo " auto + display"
+            echo ""
+            echo "example usage:"
+            echo " $( basename $0 ) auto"
+            echo ""
+        ;;
+
+        completion)
+            echo "Not implemented" >&2
+            exit 1
+        ;;
+
+        display|show|info|list)
+            echo -e "Overview"
+            echo -e ""
+            echo -e "Screens connected: $amount"
+            echo -e "Outputs: $( echo $outputs_connected | xargs )"
+            echo -e "Primary: "
+            echo -e "Mode: $mode"
+        ;;
+
+        toggle)
+            echo "Not implemented" >&2
+            exit 1
+        ;;
+
+        auto)
+            xrandr --display "$DISPLAY" --auto
+
+            #if [[ $amount -eq 1 ]] ; then
+            #    xrandr --display "$DISPLAY" --auto --output "$output_primary" --primary
+            #elif [[ $amount -eq 3 ]] ; then
+            #    xrandr --display "$DISPLAY" --auto --output eDP-1 --mode 1920x1080 --pos 5120x223 --rotate normal --output DP-1 --off --output HDMI-1 --off --output DP-2 --off --output HDMI-2 --off --output DP-2-1 --off --output DP-2-2 --primary --mode 2560x1440 --pos 2560x0 --rotate normal --primary  --left-of eDP-1 --output DP-2-3 --mode 2560x1440 --pos 0x0 --rotate normal --left-of DP-2-2
+            #else
+            #    echo "Amount of screens ($amount) not supported" >&2
+            #    exit 1
+            #fi
+
+            reload=false
+        ;;
+
+        *)
+            $0 auto
+            echo $0 display
+        ;;
+
+    esac
+
+    $reload && reload_i3 || ret=1
+
+    return $ret
+}
+
+i3_xrandr "$*"
