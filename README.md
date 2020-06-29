@@ -14,12 +14,15 @@
 ```
 /
 |
-|_ README.md        this help file
+|_ bin/                     helper and desktop scripts
 |
-|_ config           i3 config itself
+|_ README.md                this help file
 |
-\_ status.conf       i3 status config
-
+|_ config                   i3 config itself
+|
+|_ i3status.conf            i3status config
+|
+\_ i3status_small.conf      i3status config for small screens
 ```
 
 
@@ -29,11 +32,10 @@ To use this configuration, just checkout the repo to your home:
 
 ```
 # Backup existing config
-$> mv ~/.i3/ ~/i3-old/
+$ mv ~/.config/i3/ ~/.config/i3-old/
 
- # Clone the config repo
-$> git clone https://github.com/simonschiele/dot.i3/ ~/.i3/
-
+# Clone the config repo
+$ git clone https://github.com/simonschiele/dot.i3/ ~/.config/i3/
 ```
 
 
@@ -47,7 +49,13 @@ $> git clone https://github.com/simonschiele/dot.i3/ ~/.i3/
 
 ## Resources
 
+ * official i3 docs (https://i3wm.org/docs/)
  * i3 userguide (https://i3wm.org/docs/userguide.html)
+ * i3 subreddit (https://www.reddit.com/r/i3wm/)
+ * Wikis
+    * debian (https://wiki.debian.org/i3)
+    * arch (https://wiki.archlinux.org/index.php/I3)
+    * arch germany (https://wiki.archlinux.de/title/I3)
 
 
 ## Authors
