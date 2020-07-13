@@ -21,6 +21,7 @@ set $editor i3-sensible-editor
 set $exit i3-msg exit
 set $filer nautilus
 set $pager i3-sensible-pager
+set $display_config arandr
 
 set $screenshot gnome-screenshot -f ./screenshot-$(date +%Y-%m-%d_%s).png
 set $screenshotui gnome-screenshot -i
@@ -110,6 +111,7 @@ bindsym $mod+BackSpace exec --no-startup-id $browser
 bindsym $mod+Shift+BackSpace exec --no-startup-id $browser_incognito
 bindsym $mod+m exec --no-startup-id gmpc-remote --toggle-view
 bindsym $mod+p exec --no-startup-id $terminal -e "ipython3"
+bindsym $mod+d exec --no-startup-id $display_config
 
 # screenshot
 bindsym Print exec --no-startup-id $screenshot
