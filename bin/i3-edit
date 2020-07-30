@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# edit i3 config and do a syntax check afterwards
+#
+
+set -e
+
+i3_edit() {
+    local editor="${EDITOR:-vi}"
+    local configs="$HOME/.config/i3/config $HOME/.i3/config /etc/i3/config"
+    local config
+    local conf
+
+    if [[ -n "$1" ]] ; then
+        if [[ -e "$1" ]] ; then
+            config="$1"
+        else
+            echo "Can not find '$1' to edit." 2>/dev/null
+            exit 1
+        fi
+    else
+        for conf in $configs ; do
+            if [[ -e "$conf" ]] ; then
+                config="$conf"
+                break
+            fi
+        done
+    fi
+
+    if [[ -n "$config" ]] ; then
+        "$editor" "$config"
+    else
+        echo "Can not find i3 config. Pass configfile as argument." 2>/dev/null
+        exit 1
+    fi
+
+    i3 -C -c "$config"
+}
+
+i3_edit "$1"
