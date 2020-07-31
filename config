@@ -9,35 +9,39 @@
 # APPLICATIONS
 #
 
-set $browser firefox
-#set $browser chromium
-set $browser_incognito firefox --private-window
-#set $browser_incognito chromium --incognito
 set $terminal i3-sensible-terminal
 set $terminal_exec $terminal -x
+
+set $browser firefox
+set $browser_incognito firefox --private-window
+set $browser_alt chromium
+set $browser_alt_incognito chromium --incognito
 
 set $compositor compton --backend glx --vsync opengl -b
 set $editor i3-sensible-editor
 set $exit i3-msg exit
 set $filer nautilus
 set $pager i3-sensible-pager
-set $display_config arandr
+set $rofi rofi -theme arthur -show-icons -modi \\"run,ssh\\" -ssh-command \\"{terminal} -e {ssh-client} {host}\\"
 
-set $screenshot gnome-screenshot -f ./screenshot-$(date +%Y-%m-%d_%s).png
-set $screenshotui gnome-screenshot -i
-#set $screenshot gnome-screenshot -f ./pictures/screenshot-$(date +%Y-%m-%d_%s).png
-#set $screenshot_window gnome-screenshot -d 5 -b -w -f ./pictures/screenshot-$(date +%Y-%m-%d_%s).png
-#set $screenshot_area gnome-screenshot -a -f ./pictures/screenshot-$(date +%Y-%m-%d_%s).png
-#set $screenshot_ui gnome-screenshot -i
-#set $screencast kazam
+set $display_config arandr
+set $display_auto xrandr --auto
+set $display_toggle xrandr --auto
+
+set $screenshot gnome-screenshot -f "./pictures/Screenshot from $( date '+%Y-%m-%d %H-%M-%S' ).png"
+set $screenshot_area gnome-screenshot -a -f "./pictures/Screenshot from $( date '+%Y-%m-%d %H-%M-%S' ).png"
+set $screenshot_ui gnome-screenshot -i
+set $screencast kazam
 
 set $reboot systemctl reboot
 set $shutdown systemctl poweroff -i
 set $suspend2disk nop
 set $suspend2ram systemctl suspend
-set $lock i3lock -e -d -c 000022 && sleep 1
 set $reload i3-msg reload
 set $restart i3-msg restart
+# set $lock xss-lock -- i3lock -e -d -c 000022
+set $lock i3lock -e -d -c 000022 && sleep 1
+
 
 #
 # KEYMAPPINGS
@@ -101,8 +105,7 @@ bindsym $mod+w layout toggle
 #bindsym $mod+d focus child
 
 # applications
-#bindsym $mod+F1 exec --no-startup-id $terminal -e "less ~/.i3/README.md"
-# set $lock xss-lock -- i3lock -e -d -c 000022
+bindsym $mod+F1 exec --no-startup-id "surf -f ~/.config/i3/keymappings.html"
 bindsym $mod+F2 exec --no-startup-id $lock
 
 bindsym $mod+Return exec --no-startup-id $terminal
@@ -112,25 +115,18 @@ bindsym $mod+Shift+BackSpace exec --no-startup-id $browser_incognito
 bindsym $mod+m exec --no-startup-id gmpc-remote --toggle-view
 bindsym $mod+p exec --no-startup-id $terminal -e "ipython3"
 bindsym $mod+d exec --no-startup-id $display_config
+bindsym $mod+Shift+d exec --no-startup-id $display_toggle
 
 # screenshot
 bindsym Print exec --no-startup-id $screenshot
-bindsym $mod+Print exec --no-startup-id $screenshotui
-bindsym Shift+Print exec --no-startup-id $screenshotui
+bindsym $mod+Print exec --no-startup-id $screenshot_ui
+bindsym Shift+Print exec --no-startup-id $screenshot_ui
+bindsym Control+Print exec --no-startup-id $screenshot_area
 
-# launcher: exec
-bindsym $mod+e exec --no-startup-id dmenu_run # -nb red
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
-# bindsym $mod+e exec --no-startup-id rofi -show run -font "Monospace Bold 12" -m -1 -padding 200 -width 100 -hide-scrollbar -lines 10 -bw 5 -o 75
-# bindsym --release $mod+ssharp exec --no-startup-id $terminal_exec /home/simon/.bin/window.info
-# bindsym $mod+d exec shellex -bg brown -fg yellow  # shellex (https://github.com/Merovius/shellex)
-
-# launcher: ssh
-bindsym $mod+s exec --no-startup-id $terminal -e ssh $( history | grep "[0-9]  ssh " | rev | cut -d' ' -f1 | rev | sort -u | dmenu -i -nb black -nf red -sb red -sf black -l 12 )
-
-#
-# WORKSPACES
-#
+# launchers: exec, ssh, ...
+bindsym $mod+e exec "$rofi -show run"
+bindsym $mod+s exec "$rofi -show ssh"
+bindsym --release $mod+ssharp exec --no-startup-id "~/.config/i3/bin/i3-xprop"
 
 # jump to workspace
 bindsym $mod+1 workspace 1
@@ -156,18 +152,46 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
-bar {
-    position top
+# multimedia keys
+bindsym XF86MonBrightnessDown exec brightnessctl set '20%-'
+bindsym XF86MonBrightnessUp exec brightnessctl set '+20%'
 
-    # I'm not convinced yet...
-    # mode hide
-    #rhidden_state hide
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -- -10%
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10%
+bindsym XF86AudioPlay exec music playpause
+bindsym XF86AudioPause exec music playpause
+bindsym XF86AudioStop exec music stop
+bindsym XF86AudioNext exec music next
+bindsym XF86AudioPrev exec music prev
 
-    status_command i3blocks -c ~/.config/i3/i3blocks.conf || \
-                   i3status -c ~/.config/i3/i3status.conf
+#bindsym XF86Back nop
+#bindsym XF86Forward nop
+#bindsym XF86Battery nop
+bindsym XF86Display exec $display_toggle
+#bindsym XF86Favorites nop
+#bindsym XF86Tools nop
+#bindsym XF86TouchpadToggle nop
+#bindsym XF86Bluetooth nop
+#bindsym XF86WLAN nop
+#bindsym XF86LightBulb nop
+#bindsym XF86BrightnessAdjust nop
+#bindsym XF86Sleep nop
+#bindsym XF86Suspend nop
+#bindsym XF86Start nop
+#bindsym XF86Power nop
+#bindsym XF86Hibernate nop
+#bindsym XF86Eject nop
+#bindsym XF86AudioMedia nop
+#bindsym XF86Calculator nop
+#bindsym XF86Explorer nop
+#bindsym XF86Mail nop
+#bindsym XF86RFKill nop
+#bindsym XF86ScreenSaver nop
+#bindsym XF86Search nop
+#bindsym XF86WWW nop
 
-    tray_output primary
-}
 
 #
 # GENERAL SETTINGS
@@ -194,23 +218,41 @@ ipc-socket ~/.config/i3/ipc.sock
 workspace_auto_back_and_forth yes
 workspace_layout default
 
+bar {
+    position top
+
+    status_command i3blocks -c ~/.config/i3/i3blocks.conf || \
+                   i3status -c ~/.config/i3/i3status.conf
+
+    tray_output primary
+}
+
+
 #
 # CLIENT SETTINGS (defaults for floating, fullscreen, ...)
 #
 
+# generics
+for_window [window_role="About"] floating enable
+for_window [window_role="Preferences"] floating enable
 for_window [window_role="pop-up"] floating enable
+#for_window [window_role="(?i)pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+for_window [window_type="splash"] floating enable
+for_window [title="win0"] floating enable
+for_window [class="Xmessage"] floating enable
+for_window [class="(?i)notify"] floating enable border 1pixel
+
+# personal preferences
 for_window [title="Complete Installation"] floating enable
 for_window [title="Terminator Preferences"] floating enable
 for_window [title="Android Studio Setup Wizard"] floating enable
-for_window [title="win0"] floating enable
 for_window [title="Welcome to Android Studio"] floating enable
-for_window [class="Arandr"] floating enable
-for_window [class="Xmessage"] floating enable
 for_window [title="(?i)nitrogen"] floating enable
-for_window [class="(?i)notify"] floating enable border 1pixel
-
-# floating - personal applications
+for_window [class="Arandr"] floating enable
 for_window [class="(?i)qemu-system*"] floating enable
 for_window [class="(?i)mplayer"] floating enable
 for_window [class="(?i)mpv"] floating enable
@@ -225,21 +267,9 @@ for_window [title="(?i)wicd network manager"] floating enable
 for_window [title="(?i)Android*Emulator*"] floating enable
 for_window [title="(?i)Emulator*"] floating enable
 for_window [title="(?i)Video Player Daemon"] floating enable
-
-# todo: check old entries if something useful is in there
-#assign [class="(?i)pidgin" title="(?!Quickpurple$)"] move position mouse
-#assign [class="(?i)pidgin" title="^(?!Quickpurple$)"] 10
-#assign [class="(?i)pidgin"] 10
-#assign [class="(?i)skype"] 10
-#assign [class="Firefox" title="(?i)Private Browsing"] 5
-#assign [title="(?i)irc|(?i)irssi"] 10
-#assign [title="irc"] 10
-#assign [title="irssi"] 10
 #for_window [class="(?i)blueman"] floating enable
 #for_window [class="(?i)file-roller"] floating enable
 #for_window [class="(?i)galculator"] floating enable
-#for_window [class="(?i)gimp"] floating enable
-#for_window [class="(?i)gmpc"] fullscreen
 #for_window [class="(?i)gmrun"] floating enable
 #for_window [class="(?i)gnome-calculator"] floating enable
 #for_window [class="(?i)gsimplecal"] floating enable, move position mouse
@@ -249,60 +279,7 @@ for_window [title="(?i)Video Player Daemon"] floating enable
 #for_window [class="(?i)lighthouse"] floating enable
 #for_window [class="(?i)lxappearance"] floating enable
 #for_window [class="(?i)mplayer"] floating enable
-#for_window [class="(?i)mpv"] floating enable
-#for_window [class="(?i)nautilus"] floating enable
-#for_window [class="(?i)nitrogen"] floating enable
-#for_window [class="(?i)notify"] floating enable border 1pixel
-#for_window [class="(?i)pavucontrol" instance="pavucontrol-bar"] move down 34px
-#for_window [class="(?i)pavucontrol"] floating enable
-#for_window [class="(?i)pavucontrol"] floating enable, move position mouse
-#for_window [class="(?i)pidgin"] floating enable
-#for_window [class="(?i)qemu"] floating enable
-#for_window [class="(?i)qemu-system"] floating enable
-#for_window [class="(?i)qemu-system*"] floating enable
-#for_window [class="(?i)skype"] floating enable
-#for_window [class="(?i)synergy"] floating enable
-#for_window [class="(?i)thunar"] floating enable
-#for_window [class="(?i)virtualbox" title="(?i)Manager"] floating enable
-#for_window [class="(?i)virtualbox"] floating enable
-#for_window [class="(?i)xcalc"] floating enable
-#for_window [class="Arandr"] floating enable
-#for_window [class="Firefox" instance="Navigator"] floating disable
-#for_window [class="Firefox"] floating enable
-#for_window [class="Gmrun"] floating enable
-#for_window [class="MPlayer"] floating enable
-#for_window [class="Pidgin"] floating enable
-#for_window [class="Xmessage"] floating enable
-#for_window [class="^Skype$"] floating enable
-#for_window [class="feh|Keepassx|mpv|Mumble|Pavucontrol|Steam"] floating enable
-#for_window [class="gimp"] floating enable
-#for_window [class="notify"] floating enable border 1pixel
-#for_window [title="(?i)Android*Emulator*"] floating enable
-#for_window [title="(?i)Emulator*"] floating enable
-#for_window [title="(?i)Video Player Daemon"] floating enable
-#for_window [title="(?i)cinelerra"] floating enable
-#for_window [title="(?i)nitrogen"] floating enable
-#for_window [title="(?i)pidgin"] move left; resize shrink right 31px or 31 ppt
-#for_window [title="(?i)wicd network manager"] floating enable
-#for_window [title="Android Studio Setup Wizard"] floating enable
-#for_window [title="Cinelerra: "] floating enable
-#for_window [title="Complete Installation"] floating enable
-#for_window [title="Pidgin"] move left; resize shrink right 31px or 31 ppt
-#for_window [title="Preferences$"] floating enable
-#for_window [title="Terminator Preferences"] floating enable
-#for_window [title="Welcome to Android Studio"] floating enable
-#for_window [title="Wicd Network Manager"] floating enable
-#for_window [title="^Call with*"] move scratchpad; show scratchpad
-#for_window [title="win0"] floating enable
-#for_window [window_role="(?i)pop-up"] floating enable
-#for_window [window_role="About"] floating enable
-#for_window [window_role="Preferences"] floating enable
-#for_window [window_role="bubble"] floating enable
-#for_window [window_role="pop-up"] floating enable
-#for_window [window_role="task_dialog"] floating enable
-#for_window [window_type="dialog"] floating enable
-#for_window [window_type="menu"] floating enable
-#for_window [window_type="splash"] floating enable
+
 
 #
 # MODES
@@ -337,6 +314,7 @@ mode "$mode_resize" {
     bindsym BackSpace mode "default"
     bindsym Escape mode "default"
     bindsym Return mode "default"
+    bindsym $mod+r mode "default"
 }
 bindsym $mod+r mode "$mode_resize"
 
@@ -355,64 +333,8 @@ mode "$mode_system" {
     bindsym BackSpace mode "default"
     bindsym Escape mode "default"
     bindsym Return mode "default"
+    bindsym $mod+q mode "default"
 }
 bindsym $mod+q mode "$mode_system"
-
-
-#
-# OLD STUFF
-#
-
-#
-# example how to use env. variables here:
-#  set_from_resource $black i3wm.color0 #000000
-#  set_from_resource $user echo "$USER"
-#
-# example 'dialog':
-#  bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
-#
-
-# old autostart entries I still need to convert to user-services
-#  exec --no-startup-id compton --backend glx --vsync opengl -b
-#  exec --no-startup-id compton ~/.compton.conf -b
-#  exec --no-startup-id nm-applet --sm-disable
-#  exec_always --no-startup-id xrdb -load ~/.Xresources
-#  exec --no-startup-id gmpc --start-hidden --debug-level=0 --profile=Default
-#  exec --no-startup-id i3-msg 'workspace 10; exec icedove; workspace 1'
-
-# todo: multimedia keys
-# bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -- -5%
-# bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
-# bindsym XF86AudioMute exec --no-startup-id "amixer -D pulse set Master toggle"
-# bindsym XF86AudioNext nop
-# bindsym XF86AudioPause nop
-# bindsym XF86AudioPlay nop
-# bindsym XF86AudioPrev nop
-# bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
-# bindsym XF86AudioStop nop
-# bindsym XF86Back nop
-# bindsym XF86Battery nop
-# bindsym XF86Forward nop
-# bindsym XF86MonBrightnessDown exec xbacklight -dec 20
-# bindsym XF86MonBrightnessUp exec xbacklight -inc 20
-# bindsym XF86TouchpadToggle nop
-# bindsym XF86WLAN nop
-
-# Old scratchpad example
-#
-# bindsym $mod+1 exec --no-startup-id "i3-msg workspace 1; i3-msg scratchpad show"
-# bindsym $mod+2 exec --no-startup-id "i3-msg workspace 2; i3-msg scratchpad show"
-# bindsym $mod+3 exec --no-startup-id "i3-msg workspace 3; i3-msg scratchpad show"
-# bindsym $mod+4 exec --no-startup-id "i3-msg workspace 4; i3-msg scratchpad show"
-# bindsym $mod+5 exec --no-startup-id "i3-msg workspace 5; i3-msg scratchpad show"
-# bindsym $mod+6 exec --no-startup-id "i3-msg workspace 6; i3-msg scratchpad show"
-# bindsym $mod+7 exec --no-startup-id "i3-msg workspace 7; i3-msg scratchpad show"
-# bindsym $mod+8 exec --no-startup-id "i3-msg workspace 8; i3-msg scratchpad show"
-# bindsym $mod+9 exec --no-startup-id "i3-msg workspace 9; i3-msg scratchpad show"
-# bindsym $mod+0 exec --no-startup-id "i3-msg workspace 10; i3-msg scratchpad show"
-# bindsym $mod+Shift+a exec --no-startup-id "i3-msg move scratchpad; i3-msg scratchpad show"
-# bindsym $mod+a scratchpad show
-#
-# for_window [title="^Call with*"] move scratchpad; show scratchpad
 
 # vim:filetype=i3config
