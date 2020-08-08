@@ -104,6 +104,10 @@ bindsym $mod+w layout toggle
 # focus the child container
 #bindsym $mod+d focus child
 
+# scratchpad
+bindsym $mod+minus move scratchpad
+bindsym $mod+Shift+minus scratchpad show
+
 # applications
 bindsym $mod+F1 exec --no-startup-id "surf -f ~/.config/i3/keymappings.html"
 bindsym $mod+F2 exec --no-startup-id $lock
