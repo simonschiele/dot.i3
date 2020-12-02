@@ -4,9 +4,9 @@
 
 function i3-xprop() {
     xprop \
-        | grep -e TYPE -e NAME -e CLASS -e ROLE \
+        | grep -e TYPE -e NAME -e CLASS -e ROLE -e state -e STATE \
         | grep -v -e LOCALE -e ICON \
-        | xmessage -center -file -
+        | xmessage -bg gray -fg black -nearmouse -file -
 }
 
 i3-xprop "$@"
