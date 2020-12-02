@@ -1,11 +1,17 @@
 #!/bin/bash
 #
 # helper for multihead handling in i3.
+#
 # terrible idea to handle it that way... ideas welcome...
+#
+# Simon Schiele <simon.codingmonkey@gmail.com>
+# https://github.com/simonschiele/dot.i3
 #
 
 LANG=C
 DISPLAY=${DISPLAY:-:0}
+SCRIPTNAME=$( basename "$0" )
+
 set -e
 
 function reload_i3() {
@@ -28,69 +34,119 @@ function reload_i3() {
     return 0
 }
 
+function usage() {
+    echo "./$( basename $0 ) - Detect/Toggle screen-setup in my i3 setup"
+    echo ""
+    echo "usage:"
+    echo " $( basename $0 ) <action> <options>"
+    echo ""
+    echo "actions:"
+    echo " help"
+    echo " show"
+    echo " gui"
+    echo " toggle"
+    echo " auto"
+    echo ""
+    echo "default action:"
+    echo " auto"
+    echo ""
+    echo "example usage:"
+    echo " $( basename $0 ) auto"
+    echo ""
+}
+
+function get_outputs_footprint() {
+    echo "$1" | sha1sum - | awk '{print $1}'
+}
+
+function get_layouts() {
+    local xrandr_out outputs layout
+
+    xrandr_out=$( echo "$out" | sed 's/\ primary//g' | grep "^.* connected [0-9x\+]*" )
+    outputs=$( echo "$xrandr_out" | awk '{print $1}' )
+    order=$( echo "$xrandr_out" | sed 's/^\([a-zA-Z0-9\-]*\).*+\([0-9]*\)+\([0-9]*\)*.*/\2:\3:\1/g' | sort -n )
+
+    echo "$order"
+}
+
+function get_visual() {
+    local xrandr_out outputs layout
+
+    xrandr_out=$( echo "$out" | sed 's/\ primary//g' | grep "^.* connected [0-9x\+]*" )
+    outputs=$( echo "$xrandr_out" | awk '{print $1}' )
+    order=$( echo "$xrandr_out" | sed 's/^\([a-zA-Z0-9\-]*\).*+\([0-9]*\)+.*/\2:\1/g' | sort -n )
+
+    #echo "$xrandr_out"
+
+    echo "$order" | cut -f2 -d':' | tr '\n' '|' | sed -e 's/|$//g' -e 's/^|//g'
+    echo
+}
+
 function i3_xrandr() {
-    local ret action laptop lvds edp amount reload verbose mode outputs_connected output_primary
+    local ret action laptop lvds edp verbose mode out
+    local outputs_connected output_primary outputs_footprint outputs_amount
+
     ret=0
-    action=${1}
+    action="${1:-auto}"
     laptop=false
     lvds=false
     edp=false
-    reload=false
+
     verbose=true
     mode=extend
 
-    out=$( xrandr --display "$DISPLAY" -q )
-    outputs_connected=$( echo "$out" | grep " connected " )
-    amount=$( echo "$outputs_connected" | wc -l )
+    if ! xrandr --display "$DISPLAY" --auto ; then
+        echo "Error: Couldn't run xrandr-cmd" 2>&1
+        exit 1
+    fi
 
-    if ( echo "$out" | grep -q "^eDP" ) ; then
+    out=$( xrandr --display "$DISPLAY" -q )
+    outputs_connected=$( echo "$out" | sed 's/\ primary//g' | grep -o "^.*\ connected\ [0-9]*x[0-9]*" )
+    outputs_amount=$( echo "$outputs_connected" | wc -l )
+    outputs_footprint=$( get_outputs_footprint "$outputs_connected" )
+
+    if ( echo "$out" | grep -i -q "^eDP" ) ; then
         laptop=true
         edp=true
-    elif ( echo "$out" | grep -i -q "^lvds" ) ; then
+    fi
+
+    if ( echo "$out" | grep -i -q "^lvds" ) ; then
         laptop=true
         lvds=true
     fi
 
-    if [[ $amount -eq 1 ]] ; then
+    # todo: get rid of this
+    if [[ $outputs_amount -eq 1 ]] ; then
         output_primary=$( echo "$outputs_connected" | awk '{ print $1 }' )
-    elif [[ $amount -eq 3 ]] ; then
+    elif [[ $outputs_amount -eq 3 ]] ; then
         output_primary="DP2-2"
     fi
 
     case "$action" in
 
-        help)
-            echo "./$( basename $0 ) - Detect/Toggle screen-setup in for my i3 setup"
-            echo ""
-            echo "usage:"
-            echo " $( basename $0 ) <action> <options>"
-            echo ""
-            echo "actions:"
-            echo " help"
-            echo " show"
-            echo " toggle"
-            echo " auto"
-            echo ""
-            echo "default action:"
-            echo " auto + display"
-            echo ""
-            echo "example usage:"
-            echo " $( basename $0 ) auto"
-            echo ""
+        \-\-help|\-h|help)
+            usage
         ;;
 
         completion)
-            echo "Not implemented" >&2
-            exit 1
+            echo "help --help show gui toggle auto"
         ;;
 
         display|show|info|list)
-            echo -e "Overview"
-            echo -e ""
-            echo -e "Screens connected: $amount"
-            echo -e "Outputs: $( echo $outputs_connected | xargs )"
-            echo -e "Primary: "
+            echo -e "Outputs:"
+            echo -e "$outputs_connected" | sed -e 's/^/\t/g' -e 's/\ connected//g' -e 's/\([0-9]*x[0-9]*\)/(\1)/g'
+            echo -e "Layout:"
+            get_visual | sed 's/^/\t/g'
+            echo -e "Available Layouts:"
+            get_layouts | sed 's/^/\t/g'
+            echo -e "Outputs footprint: $outputs_footprint"
+            echo -e "Screens connected: $outputs_amount"
+            echo -e "Primary: $output_primary"
+            echo -e "Laptop: $laptop"
+            echo -e "eDP: $edp"
+            echo -e "LVDS: $lvds"
             echo -e "Mode: $mode"
+            echo -e
         ;;
 
         toggle)
@@ -98,8 +154,20 @@ function i3_xrandr() {
             exit 1
         ;;
 
+        gui)
+            if ( ! which arandr >/dev/null ) ; then
+                echo "Error: 'arandr' not found" 2>&1
+                exit 1
+            fi
+            arandr
+        ;;
+
         auto)
-            xrandr --display "$DISPLAY" --auto
+            # auto behavior:
+            #  1. run: restore last setup for this output-footprint
+            #  2. run: toggle
+            #  3. run: toggle
+            #  4. run: ...
 
             #if [[ $amount -eq 1 ]] ; then
             #    xrandr --display "$DISPLAY" --auto --output "$output_primary" --primary
@@ -110,17 +178,14 @@ function i3_xrandr() {
             #    exit 1
             #fi
 
-            reload=false
         ;;
 
         *)
-            $0 auto
-            echo $0 display
+            echo "Error: Unknown action '$action' - see '$SCRIPTNAME --help' for usage details" 2>&1
+            exit 1
         ;;
 
     esac
-
-    $reload && reload_i3 || ret=1
 
     return $ret
 }
